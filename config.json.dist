@@ -1,0 +1,5 @@
+{ 
+    "token"  : "token",
+    "prefix" : "!"
+    "help_time_loop":15000
+}

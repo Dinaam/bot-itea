@@ -1,55 +1,36 @@
-require("dotenv").config();
+const fs = require('fs');
 const Discord = require("discord.js");
+const config = require("./config.json");
 const client = new Discord.Client({
   partials: ["MESSAGE", "CHANNEL", "REACTION"],
 });
+const prefix = config.prefix;
 
-client.on("message", (message) => {
-  if (message.content.includes("!help")) {
-    loopTillHandled(message);
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.name, command);
+}
+
+client.on("message", (message) => {                                               
+  if (!message.content.startsWith(prefix) || message.author.bot) {
+    return;
+  }
+  const args = message.content.slice(prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
+
+  if (!client.commands.has(command)){
+    return;
+  } 
+
+  try {
+    client.commands.get(command).execute(message, args);
+  } catch (error) {
+    console.error(error);
+    message.reply("Une erreur est survenue à l'éxecution de cette commande");
   }
 });
 
-function loopTillHandled(message) {
-  const boucle = setInterval(
-    (message) => {
-      message.channel.messages
-        .fetch(message.id)
-        .then((msg) => {
-          const item = msg.reactions.cache.find((elem) => {
-            return elem.emoji.name == "✅";
-          });
-          if (item !== undefined) {
-            clearInterval(boucle);
-            return;
-          }
-          message.channel.send({
-            embed: {
-              color: 15158332,
-              author: {
-                name: client.user.username,
-                icon_url: client.user.avatarURL,
-              },
-              fields: [
-                {
-                  name: "Bah alors ?! Personne veut traiter ce message : ",
-                  value: message.content,
-                },
-              ],
-              timestamp: new Date(),
-              footer: {
-                icon_url: client.user.avatarURL,
-                text: "© ITEA",
-              },
-            },
-          });
-        })
-        .catch(console.error);
-        
-    },
-    15000,
-    message
-  );
-}
-
-client.login(process.env.TOKEN);
+client.login(config.token);
