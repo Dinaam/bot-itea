@@ -7,7 +7,7 @@ Message loop (if !help command) till it's handled by someone (CheckMark reaction
 ## Project setup :wrench:
 
 *FIRST OF ALL : Download or clone the project locally*<br>
-*Duplicate .env.dist file in .env and change the value of TOKEN and the value of by yours*
+*Duplicate config.json.dist file in config.json and change the value of TOKEN by yours*
 
 <br>
 
