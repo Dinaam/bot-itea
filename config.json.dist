@@ -1,5 +1,8 @@
 { 
     "token"  : "token",
     "prefix" : "!"
-    "help_time_loop":15000
+    "help_time_loop":15000,
+    "help_time_loop": 15000,
+    "id_channel_statuts":"772117288538341376",
+    "id_message_teletravail": "772490328929468416"
 }
